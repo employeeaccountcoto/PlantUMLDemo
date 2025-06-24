@@ -1,0 +1,99 @@
+@startuml frame_4
+!pragma resolution 300
+
+' Enable SVG animation
+!pragma svganimated true
+
+' Enable arrow animation using 
+
+
+skinparam titleBorderRound 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor white
+skinparam FontName "Verdana" 
+
+' Arrow styling for animation effect
+skinparam ArrowColor DeepSkyBlue
+skinparam ArrowThickness 2
+
+title Data Migration Process Flow \n CAPS To PAT Migration Process
+
+actor User
+participant "Main Program" as Main
+participant "Helper" as Helper
+participant "ServiceProvider" as ServiceProvider
+
+User -[dashed,#blue,bold,thickness=3]-> Main : Start with args
+activate Main
+
+Main -[#blue,bold,dashed]-> Main : Create ParameterInfo
+alt ShowHelp is true
+    Main -[dashed,#green,bold,thickness=3]-> User : Return Success
+end
+
+Main -[dashed,#blue,bold,thickness=3]-> ServiceProvider : AppSetup(IsBenchmark, EnvironmentName, OnlyPreRenewal)
+activate ServiceProvider
+
+Main -[#blue,bold,dashed]-> Main : Set executionGuid
+Main -[#blue,bold,dashed]-> Main : Get FullRunLogger
+Main -[dashed,#blue,bold,thickness=3]-> ServiceProvider : Get Helper service
+activate Helper
+
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_NotifyBenchmarkIfApplicable
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_NotifyEnvironment
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_LogAzureConnectionDetails
+
+alt Getpolicymigrationreport is true
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_CreatePolicyMigrationReport
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_CreateHupeMigrationWeeklyReport
+    Main -[dashed,#green,bold,thickness=3]-> User : Return Success
+end
+
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_PerformETLProcess
+Helper -[#purple,bold,dashed]-> Main : Return ETL data
+Main -[#blue,bold,dashed]-> Main : Store AgencyPoliciesFromCaps
+
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_NotifyFullExtractionReport
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_CreateFullExtractionReportByAgencyOrPolicyNumbers (async)
+
+alt ETLDone is true
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_GetPoliciesToETL
+    activate Helper
+    Helper -[#purple,bold,dashed]-> Main : Return etlPolicies
+    deactivate Helper
+    
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_RunValidation_WhenParameterIsOn
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_CheckPoliciesAgainstTheAllowedSet
+    Helper -[#purple,bold,dashed]-> Main : Return filtered etlPolicies
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_PassPrerenewalFlagForAllConsumersSoThatTheyAreAware
+    
+    alt RunIssuesToResolveValidation is true
+        Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_RunIssuesToResolveValidation
+        Main -[dashed,#green,bold,thickness=3]-> User : Return Success
+    end
+      Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_RunIssuesToResolveValidation_WhenFlagsAllow
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_CompareNumberOfPoliciesTransactionCountsByLOB
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_CreateExecutionStatus_WhenAllowed
+    Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_LogFinalSuccessMessage
+else ETLDone is false
+    Main -[dashed,#red,bold,thickness=3]-> Helper : Step_LogErrorForPreRenewalPolicies
+end
+
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_DeleteTemporaryFilesFromMigrationProcess
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Step_ProcessDailyValidationRun
+Main -[dashed,#orange,bold,thickness=3]-> Helper : Await step_completeFullExtractionReportTask
+
+deactivate Helper
+deactivate ServiceProvider
+
+Main -[dashed,#green,bold,thickness=3]-> User : Return Success
+
+note right of Main
+  Exception handling:
+  If any exception occurs during the process,
+  it will be published via ExceptionPublisher,
+  logged, and Error exit code will be returned
+end note
+
+@enduml

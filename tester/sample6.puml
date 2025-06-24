@@ -1,0 +1,30 @@
+@startuml Order Processing Activity
+
+start
+:Receive Order;
+note right: From e-commerce platform
+
+if (Stock Available?) then (yes)
+  :Reserve Items;
+  :Process Payment;
+  
+  if (Payment Successful?) then (yes)
+    :Package Items;
+    :Ship Order;
+    :Send Tracking Information;
+  else (no)
+    :Notify Customer;
+    :Cancel Reservation;
+  endif
+  
+else (no)
+  :Add to Backorder;
+  :Notify Purchasing;
+  :Notify Customer;
+endif
+
+:Update Inventory System;
+
+stop
+
+@enduml

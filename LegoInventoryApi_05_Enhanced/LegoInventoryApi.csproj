@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+        <EnableDefaultContentItems>false</EnableDefaultContentItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <!-- Add PlantUML.Net for .NET-based diagram generation -->
+    <PackageReference Include="PlantUml.Net" Version="1.4.80" />
+  </ItemGroup>
+
+  <!-- Include the wwwroot content -->
+  <ItemGroup>
+    <Content Include="wwwroot\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Simple PlantUML generation approach -->
+  <Target Name="GeneratePlantUMLDiagram" BeforeTargets="Build">
+    <Message Text="Generating PlantUML diagrams" Importance="high" />
+    
+    <!-- Create necessary directories -->
+    <MakeDir Directories="$(ProjectDir)wwwroot\images" Condition="!Exists('$(ProjectDir)wwwroot\images')" />
+    
+    <!-- Generate the diagram using PowerShell -->
+    <Exec Command="powershell -Command &quot;$ErrorActionPreference = 'Stop'; Add-Type -Path '$(NuGetPackageRoot)plantuml.net\1.4.80\lib\netstandard2.0\PlantUml.Net.dll'; $factory = New-Object PlantUml.Net.RendererFactory; $renderer = $factory.CreateRenderer(); $content = [System.IO.File]::ReadAllText('$(ProjectDir)LegoInventoryC4Diagram.puml'); $output = $renderer.RenderAsync($content, [PlantUml.Net.OutputFormat]::Png).GetAwaiter().GetResult(); [System.IO.File]::WriteAllBytes('$(ProjectDir)wwwroot\images\LegoInventoryC4Diagram.png', $output)&quot;" />
+    
+    <!-- Copy generated diagrams to published output -->
+    <ItemGroup>
+      <DiagramsToInclude Include="$(ProjectDir)wwwroot\images\*.png" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DiagramsToInclude)" DestinationFolder="$(PublishDir)wwwroot\images" Condition="'$(PublishDir)' != ''" />
+  </Target>
+
+
+</Project>

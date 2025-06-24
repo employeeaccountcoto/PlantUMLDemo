@@ -1,0 +1,17 @@
+@LegoInventoryApi_HostAddress = http://localhost:5089
+
+### Get all parts
+GET {{LegoInventoryApi_HostAddress}}/api/parts
+Accept: application/json
+
+### Get a specific part by part number
+GET {{LegoInventoryApi_HostAddress}}/api/parts/003381
+Accept: application/json
+
+### Test with a part number that exists in the CSV
+GET {{LegoInventoryApi_HostAddress}}/api/parts/004590
+Accept: application/json
+
+### Test with a non-existent part number
+GET {{LegoInventoryApi_HostAddress}}/api/parts/999999
+Accept: application/json

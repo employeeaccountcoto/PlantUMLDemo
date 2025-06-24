@@ -1,0 +1,34 @@
+@startuml Cloud Architecture
+
+node "User Device" as device {
+  artifact "Web Browser" as browser
+}
+
+cloud "Cloud Platform" {
+  node "Load Balancer" as lb {
+    component "NGINX" as nginx
+  }
+  
+  node "Application Servers" as app {
+    component "App Server 1" as app1
+    component "App Server 2" as app2
+  }
+  
+  node "Database Cluster" as db {
+    database "Primary DB" as primaryDB
+    database "Replica DB" as replicaDB
+  }
+  
+  node "Cache Service" as cache {
+    database "Redis" as redis
+  }
+}
+
+device --> lb : HTTPS
+lb --> app
+app --> db
+app --> cache
+
+primaryDB -right-> replicaDB : replication
+
+@enduml

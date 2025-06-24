@@ -1,0 +1,28 @@
+@startuml User Authentication Flow
+
+actor User
+participant Frontend
+participant "Auth Service" as Auth
+database Database
+
+User -> Frontend : Enter credentials
+activate Frontend
+Frontend -> Auth : Authenticate(username, password)
+activate Auth
+
+Auth -> Database : Query user
+activate Database
+Database --> Auth : User details
+deactivate Database
+
+alt successful case
+    Auth --> Frontend : Authentication token
+    Frontend --> User : Access granted
+else failed case
+    Auth --> Frontend : Authentication failed
+    Frontend --> User : Access denied
+end
+deactivate Auth
+deactivate Frontend
+
+@enduml

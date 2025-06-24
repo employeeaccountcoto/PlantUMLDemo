@@ -1,0 +1,48 @@
+@startuml LegoInventoryApi C4 Diagram
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' LAYOUT_WITH_LEGEND()
+' LAYOUT_TOP_DOWN()
+LAYOUT_LEFT_RIGHT()
+
+title System Context and Container View for Lego Inventory API
+
+' Define the system context
+Person(apiClient, "API Client", "Any client consuming the Lego Inventory API")
+
+System_Boundary(legoInventorySystem, "Lego Inventory System") {
+    Container(api, "Lego Inventory API", ".NET Core Web API", "Provides part information via REST API")
+    ContainerDb(csvFile, "Parts CSV File", "CSV File", "Contains Lego part data")
+}
+
+' Define the relationships
+Rel(apiClient, api, "Makes API requests to", "HTTP/GET")
+Rel(api, csvFile, "Reads from")
+
+' Define the components view
+Boundary(apiBoundary, "API Components") {
+    Component(partsController, "PartsController", "ASP.NET Core Controller", "Handles HTTP requests for parts")
+    Component(partService, "PartService", "Service", "Provides part data operations")
+    Component(partModel, "Part Model", "C# Class", "Data model for a Lego part")
+}
+
+' Define the component relationships
+Rel(apiClient, partsController, "Makes API requests to", "HTTP/GET")
+Rel(partsController, partService, "Uses")
+Rel(partService, partModel, "Creates/Returns")
+Rel(partService, csvFile, "Reads & parses")
+
+' Define the code level details
+Component(getPartsEndpoint, "GET /api/parts", "Endpoint", "Returns all parts")
+Component(getPartByNumEndpoint, "GET /api/parts/{partNum}", "Endpoint", "Returns a specific part by part number")
+
+Rel(partsController, getPartsEndpoint, "Contains")
+Rel(partsController, getPartByNumEndpoint, "Contains")
+Rel(getPartsEndpoint, partService, "Calls GetAllPartsAsync()")
+Rel(getPartByNumEndpoint, partService, "Calls GetPartByPartNumAsync()")
+
+@enduml

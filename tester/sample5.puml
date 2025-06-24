@@ -1,0 +1,31 @@
+@startuml E-commerce Use Cases
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Customer as customer
+actor "Admin User" as admin
+
+rectangle "E-commerce System" {
+  usecase "Browse Products" as UC1
+  usecase "Search Products" as UC2
+  usecase "Add to Cart" as UC3
+  usecase "Checkout" as UC4
+  usecase "Process Payment" as UC5
+  usecase "Track Order" as UC6
+  usecase "Manage Products" as UC7
+  usecase "Generate Reports" as UC8
+}
+
+customer --> UC1
+customer --> UC2
+customer --> UC3
+customer --> UC4
+customer --> UC6
+
+admin --> UC7
+admin --> UC8
+
+UC4 ..> UC5 : includes
+
+@enduml

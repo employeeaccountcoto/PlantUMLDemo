@@ -1,0 +1,31 @@
+@startuml Component Architecture
+allow_mixing
+!define RECTANGLE class
+
+RECTANGLE "Web Interface" as web #LightBlue {
+}
+
+RECTANGLE "API Gateway" as api #Yellow {
+}
+
+RECTANGLE "Authentication" as auth #PaleGreen {
+}
+
+RECTANGLE "User Management" as users #Orange {
+}
+
+RECTANGLE "Billing System" as billing #Pink {
+}
+
+database "User DB" as userDB
+database "Billing DB" as billingDB
+
+web -right-> api : HTTP/REST
+api -down-> auth
+api -down-> users
+api -down-> billing
+users -right-> userDB
+billing -right-> billingDB
+auth --> userDB
+
+@enduml

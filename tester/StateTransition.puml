@@ -1,0 +1,127 @@
+@startuml Sequence Diagram
+
+' Title and scaling for larger diagram
+title <font size=20>System Process Flow Diagram</font>
+scale 1.5
+
+
+skinparam pageMargin 10
+skinparam pageExternalColor white
+skinparam pageBorderColor white
+
+' Styling for better readability
+skinparam sequenceArrowThickness 2
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 200
+skinparam sequenceGroupBodyBackgroundColor transparent
+skinparam dpi 300
+skinparam defaultFontSize 14
+skinparam participantFontSize 16
+skinparam titleFontSize 20
+
+' Define the participants - three main systems with three states each
+participant "CA Initial" as CAI
+participant "CA Transient" as CAT
+participant "CA Terminal" as CAF
+
+participant "AC Initial" as ACI
+participant "AC Transient" as ACT
+participant "AC Terminal" as ACF
+
+participant "MC Initial" as MCI
+participant "MC Transient" as MCT
+participant "MC Terminal" as MCF
+
+' Group the participants by system
+box "Console Application (CA)" #LightBlue
+  participant CAI
+  participant CAT
+  participant CAF
+end box
+
+box "Account Consumer (AC)" #LightGreen
+  participant ACI
+  participant ACT
+  participant ACF
+end box
+
+box "Migration Consumer (MC)" #LightYellow
+  participant MCI
+  participant MCT
+  participant MCF
+end box
+
+' Start the flow
+activate CAI
+
+' CA Process Flow
+CAI -> CAT: ETL Started
+activate CAT
+
+  CAT -> ACT: "CA_00 \n _ETL_Completed"
+  deactivate CAT
+
+  CAT -> CAF: "CA_01  \n _ETL_Failed"
+  deactivate CAT
+  note right of CAF: <font color=red><b>FAILURE:</b></font> \n ETL execution \n failed
+
+  CAT -> CAF: "CA_02_\n AccountNumber\n Missing_ETL"
+  deactivate CAT
+  note right of CAF: <font color=red><b>FAILURE:</b></font> \n WebSec missing \n account info
+
+
+' AC Process Flow
+activate ACT
+
+  ACT -> MCT: "AC_02_ \n _OldActivityCleaned"
+  deactivate ACT
+  ACI -> ACF: "AC_01_ \n AccountNotFound_ \n PLQuoteStorageRest"
+  note right of ACF: <font color=red><b>FAILURE:</b></font> Account not \n found in storage
+  ACT -> ACF: "AC_03_ \n AccountNotFound_ \n CoreFramework \n Insurance"
+  deactivate ACT
+  note right of ACF: <font color=red><b>FAILURE:</b></font> Account \n not found in core
+
+
+' MC Process Flow
+activate MCT
+MCI -> MCT: "MC_01_ \n ETLCompleted"
+activate MCT
+  MCT -> MCF: "MC_02_ \n PolicyJsonExtractFailed" 
+  note right of MCF: <font color=red><b>FAILURE:</b></font> \n JSON file \n extract failed
+
+  MCT -> MCT: "MC_03_ \n PolicyJsonExtracted"
+  
+  MCT -> MCF: MC_05_ \n ValidationException
+  note right of MCF: <font color=red><b>FAILURE:</b></font> \n Validation status
+
+  MCT -> MCT: "MC_04_ \n PolicyActivityAdjusted"
+  MCT -> MCT: "MC_06_ \n PolicyActivityCreated"
+
+  MCT -> MCF: "MC_08_ \n RatingFailed"
+  note right of MCF: <font color=red><b>FAILURE:</b></font> \n Rating failed \n or premium \n mismatch
+
+  MCT -> MCT: "MC_07_ \n RatingCompleted"
+      
+  MCT -> MCT: "MC_09_ \n AttachFormsCompleted"
+  MCT -> MCF: "MC_10_ \n AttachForms \n Failed"
+  note right of MCF: <font color=red><b>FAILURE:</b></font> \n Forms attach \n failed
+  MCT -> MCF: "MC_11_ \n AttachForms \n NotMatch"
+  note right of MCF: <font color=red><b>FAILURE:</b></font> \n Forms don't match
+      
+  MCT -> MCF: "MC_13_ \n IssuePreRenewalFailed"
+  note right of MCF: <font color=red><b>FAILURE:</b></font> \n Pre-renewal \n failed
+        
+  MCT -> MCF: "MC_12_ \n IssuePreRenewal \n Completed"
+  note right of MCF: <font color=green><b>SUCCESS:</b></font> \n Pre-renewal \n completed
+        
+  MCT -> MCF: MC_99_ \n FailedWithException
+  note right of MCF: <font color=red><b>FAILURE:</b></font> \n General exception
+
+
+deactivate MCT
+deactivate MCT
+
+' Add footer with sizing information
+footer <font size=10>Generated %date("yyyy-MM-dd") - Full size diagram</font>
+
+@enduml

@@ -1,0 +1,10 @@
+
+@startuml
+skinparam dpi 150
+!define LEGO https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Lego_dimensions.svg/500px-Lego_dimensions.svg.png
+
+sprite $lego [LEGO]
+
+rectangle "LEGO Brick" as Brick
+Brick --> [[$lego]]
+@enduml

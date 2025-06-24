@@ -1,0 +1,96 @@
+/* LEGO-themed Swagger UI Custom Styles */
+
+/* CSS Variables for LEGO Colors */
+:root {
+    --lego-red: #C4281C;
+    --lego-yellow: #FFD700;
+    --lego-blue: #0070F3;
+    --lego-green: #4CAF50;
+    --lego-orange: #FF8C00;
+    --lego-dark: #2C3E50;
+    --lego-light: #ECF0F1;
+}
+
+/* Base Body Styling */
+body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, var(--lego-blue) 0%, var(--lego-green) 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Custom Header Styling */
+.custom-header {
+    background: linear-gradient(90deg, var(--lego-red) 0%, var(--lego-yellow) 50%, var(--lego-red) 100%);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.header-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.header-subtitle {
+    font-size: 1.2rem;
+    margin: 10px 0 0 0;
+    opacity: 0.9;
+}
+
+/* LEGO Brick Decorations */
+.lego-bricks {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.lego-brick {
+    width: 40px;
+    height: 24px;
+    border-radius: 4px;
+    position: relative;
+}
+
+.lego-brick.red { background-color: var(--lego-red); }
+.lego-brick.yellow { background-color: var(--lego-yellow); }
+.lego-brick.blue { background-color: var(--lego-blue); }
+.lego-brick.green { background-color: var(--lego-green); }
+
+/* Main Container Styling */
+.swagger-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-top: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+/* Footer Styling */
+.custom-footer {
+    text-align: center;
+    padding: 20px;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.custom-footer a {
+    color: var(--lego-yellow);
+    text-decoration: none;
+    font-weight: bold;
+}

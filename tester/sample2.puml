@@ -1,0 +1,22 @@
+@startuml Basic Class Diagram
+
+class Customer {
+  +String name
+  +String email
+  -String id
+  +register()
+  +login()
+  +updateProfile()
+}
+
+class Order {
+  +int orderNumber
+  +Date orderDate
+  +float totalAmount
+  +processPayment()
+  +ship()
+  +cancel()
+}
+
+Customer "1" -- "many" Order : places >
+@enduml

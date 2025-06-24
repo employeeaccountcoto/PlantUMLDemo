@@ -1,0 +1,38 @@
+@startuml Website Loading Performance
+
+robust "Browser" as Browser
+robust "Web Server" as Server
+robust "Database" as DB
+
+Browser is idle
+Server is idle
+DB is idle
+
+@0
+Browser is requesting
+
+@+100
+Server is processing
+Browser is waiting
+
+@+150
+DB is querying
+Server is waiting
+
+@+200
+DB is processing
+
+@+300
+DB is idle
+Server is rendering
+
+@+100
+Server is idle
+Browser is rendering
+
+@+200
+Browser is idle
+
+highlight 0 to 950 #lightblue : Total page load time: 950ms
+
+@enduml

@@ -1,0 +1,25 @@
+@startuml Order State Machine
+
+[*] --> Submitted
+Submitted --> Processing : approve
+Processing --> Shipped : ship
+Shipped --> Delivered : deliver
+Processing --> Cancelled : cancel
+Submitted --> Cancelled : cancel
+Cancelled --> [*]
+Delivered --> [*]
+
+state Submitted {
+  [*] --> PendingApproval
+  PendingApproval --> Approved : verify
+  PendingApproval --> Rejected : reject
+}
+
+state Processing {
+  [*] --> InProgress
+  InProgress --> QualityCheck
+  QualityCheck --> ReadyToShip : pass
+  QualityCheck --> InProgress : fail
+}
+
+@enduml

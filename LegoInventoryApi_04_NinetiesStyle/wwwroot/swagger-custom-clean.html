@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧱 LEGO Inventory API Documentation</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../lego-swagger-main.css" />
+</head>
+<body>
+    <div class="custom-header">
+        <div class="header-content">
+            <h1 class="header-title">🧱 LEGO Inventory API</h1>
+            <p class="header-subtitle">Build Your Dreams, One Brick at a Time!</p>
+            <div class="lego-bricks">
+                <div class="lego-brick red"></div>
+                <div class="lego-brick yellow"></div>
+                <div class="lego-brick blue"></div>
+                <div class="lego-brick green"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="swagger-container">
+        <div class="loading-bricks" id="loadingBricks">
+            <div class="loading-brick"></div>
+            <div class="loading-brick"></div>
+            <div class="loading-brick"></div>
+        </div>
+        <div id="swagger-ui"></div>
+    </div>
+
+    <div class="custom-footer">
+        <p>Made with ❤️ and lots of LEGO bricks | <a href="#" onclick="addEasterEgg()">Click for a surprise!</a></p>
+    </div>
+
+    <script src="./swagger-ui-bundle.js" charset="UTF-8"></script>
+    <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+    <script>
+        // Hide loading animation once Swagger loads
+        window.onload = function() {
+            setTimeout(() => {
+                document.getElementById('loadingBricks').style.display = 'none';
+            }, 2000);
+        };
+
+        // Easter egg function
+        function addEasterEgg() {
+            const colors = ['var(--lego-red)', 'var(--lego-yellow)', 'var(--lego-blue)', 'var(--lego-green)', 'var(--lego-orange)'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const brick = document.createElement('div');
+                    brick.style.position = 'fixed';
+                    brick.style.width = '20px';
+                    brick.style.height = '20px';
+                    brick.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    brick.style.borderRadius = '3px';
+                    brick.style.left = Math.random() * window.innerWidth + 'px';
+                    brick.style.top = '-20px';
+                    brick.style.zIndex = '9999';
+                    brick.style.pointerEvents = 'none';
+                    document.body.appendChild(brick);
+
+                    const animation = brick.animate([
+                        { transform: 'translateY(0px) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(${window.innerHeight + 50}px) rotate(360deg)`, opacity: 0 }
+                    ], {
+                        duration: 3000,
+                        easing: 'ease-in'
+                    });
+
+                    animation.onfinish = () => brick.remove();
+                }, i * 100);
+            }
+        }
+
+        // Initialize Swagger UI
+        window.onload = function() {
+            const ui = SwaggerUIBundle({
+                url: '/swagger/v1/swagger.json',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                defaultModelsExpandDepth: 1,
+                defaultModelExpandDepth: 1,
+                docExpansion: 'list',
+                filter: true,
+                showRequestHeaders: true,
+                showCommonExtensions: true,
+                tryItOutEnabled: true
+            });
+
+            // Hide loading animation
+            setTimeout(() => {
+                document.getElementById('loadingBricks').style.display = 'none';
+            }, 2000);
+        };
+    </script>
+</body>
+</html>
